@@ -12,10 +12,12 @@ import {
 import { IParameter } from "../../types/parameters";
 import { IUserProduct } from "../../types/user";
 import cloneDeep from "lodash/cloneDeep";
+import img from "../../assets/img.jpeg"
 
 interface ICartProducts {
   products: IModifiedProduct[] | null;
   totalCost: number;
+  discount?: number;
 }
 
 interface IinitialState {
@@ -113,19 +115,42 @@ const productsSlice = createSlice({
   },
 });
 
+const products: IProduct[] = [
+  {
+    id: "men",
+    name: "Highlander Jeans",
+    imageUrl: img,
+    colors: ["blue", "black"],
+    sizes: ["L", "XL"],
+    price: 896.89,
+    stockAmount: 2,
+    discountRate: 34,
+    description: {
+      details: "Lorem ispum",
+      materials: ["Cotton", "Plastic"],
+    },
+    primaryCategory: "men",
+    secondaryCategory: "sho",
+    tertiaryCategory: "ls",
+    isFavorite: false,
+    collections: ["New", "Sale"],
+  },
+];
+
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAllProducts",
   async () => {
-    let q = query(collection(db, "products"));
-    const querySnapshot = await getDocs(q);
+    // let q = query(collection(db, "products"));
+    // const querySnapshot = await getDocs(q);
     let data: IProduct[] | null = getCachedProductsByPrimaryCategories();
 
     if (!data || !data.length) {
-      data = querySnapshot.docs.map((doc) => {
-        let docData = doc.data() as IProduct;
-        docData.id = doc.id;
-        return docData;
-      });
+      // data = uerySnapshot.docs.map((doc) => {
+      //   let docData = doc.data() as IProduct;
+      //   docData.id =q doc.id;
+      //   return docData;
+      // });
+      data = products;
       sliceProductsAndAddToLocalStorage(data);
     }
 
@@ -145,46 +170,46 @@ export const fetchProductsByCategories = createAsyncThunk(
     },
     thunkAPI
   ) => {
-    const { primary, secondary, tertiary } = searchParameters;
+    // const { primary, secondary, tertiary } = searchParameters;
 
-    let data: IProduct[] = getCachedProductsByPrimaryCategory(primary);
+    // let data: IProduct[] = getCachedProductsByPrimaryCategory(primary);
 
-    // if products didn't cached before get products from server and cache
-    if (!data || data.length === 0) {
-      data = [];
-      let q = query(
-        collection(db, "products"),
-        where("primaryCategory", "==", primary)
-      );
-      let querySnapshot = await getDocs(q);
+    // // if products didn't cached before get products from server and cache
+    // if (!data || data.length === 0) {
+    //   data = [];
+    //   let q = query(
+    //     collection(db, "products"),
+    //     where("primaryCategory", "==", primary)
+    //   );
+    //   let querySnapshot = await getDocs(q);
 
-      querySnapshot.docs.forEach((doc) => {
-        let docData = doc.data() as IProduct;
-        docData.id = doc.id;
-        data.push(docData);
-      });
-      localStorage.setItem(primary, JSON.stringify(data));
-    }
+    //   querySnapshot.docs.forEach((doc) => {
+    //     let docData = doc.data() as IProduct;
+    //     docData.id = doc.id;
+    //     data.push(docData);
+    //   });
+    //   localStorage.setItem(primary, JSON.stringify(data));
+    // }
 
-    if (secondary.length) {
-      const tertiaryIds = tertiary.flatMap((item) => Object.values(item));
-      let filteredProducts = filterBySubCategories(
-        secondary,
-        tertiaryIds,
-        data
-      );
-      filteredProducts = mapWithFavoriteProductIds(
-        filteredProducts,
-        favoriteProductIds
-      );
-      return filteredProducts;
-    } else {
-      let filteredProducts = mapWithFavoriteProductIds(
-        data,
-        favoriteProductIds
-      );
-      return filteredProducts;
-    }
+    // if (secondary.length) {
+    //   const tertiaryIds = tertiary.flatMap((item) => Object.values(item));
+    //   let filteredProducts = filterBySubCategories(
+    //     secondary,
+    //     tertiaryIds,
+    //     data
+    //   );
+    //   filteredProducts = mapWithFavoriteProductIds(
+    //     filteredProducts,
+    //     favoriteProductIds
+    //   );
+    //   return filteredProducts;
+    // } else {
+    //   let filteredProducts = mapWithFavoriteProductIds(
+    //     data,
+    //     favoriteProductIds
+    //   );
+    //   return filteredProducts;
+    return products;
   }
 );
 

@@ -210,7 +210,7 @@ const CartSummary = ({ setActiveStep }: IProps) => {
               marginBottom="29px"
               sx={{ textAlign: { xs: "center", md: "start" } }}
             >
-              Your cart
+              Delivery Estimates
             </Typography>
 
             <Stack
@@ -268,63 +268,50 @@ const CartSummary = ({ setActiveStep }: IProps) => {
                       <Typography
                         fontSize="14px"
                         fontWeight={theme.fontWeight.regular}
-                        width="60px"
+                        width="500px"
                       >
-                        White
+                        Estimated delivery by{" "}
+                        <Box component="span" sx={{ fontWeight: 800 }}>
+                          20 Aug 2023
+                        </Box>
                       </Typography>
-                      <Typography
-                        fontSize="14px"
-                        fontWeight={theme.fontWeight.regular}
-                        width="60px"
-                      >
-                        XL
-                      </Typography>
-                      <Stack
-                        direction="row"
-                        columnGap="10px"
-                        sx={{ justifyContent: { md: "space-between" } }}
-                        width="100px"
-                      >
-                        <Typography
-                          fontSize="14px"
-                          fontWeight={theme.fontWeight.semiBold}
-                        >
-                          {product.price}
-                        </Typography>
-                        <Typography
-                          fontSize="14px"
-                          fontWeight={theme.fontWeight.regular}
-                        >
-                          x{product.amount}
-                        </Typography>
-                      </Stack>
                     </Stack>
                   </Stack>
                 ))}
               </Stack>
 
               <Stack
-                direction="row"
+                direction="column"
                 sx={{
                   alignItems: "center",
                   justifyContent: { xs: "center", md: "flex-start" },
-                  width: { lg1300: "350px" },
+                  width: { lg1300: "500px" },
                 }}
               >
+                <Typography
+                  fontSize="14px"
+                  fontWeight={theme.fontWeight.semiBold}
+                  width="200px"
+                >
+                  Price details (
+                  {cartProducts.products.length > 1
+                    ? `${cartProducts.products.length} items`
+                    : `${cartProducts.products.length} item`}
+                  )
+                </Typography>
                 <Stack
                   direction="row"
-                  alignItems="center"
-                  justifyContent="center"
+                  // alignItems="center"
+                  // justifyContent="center"
                   columnGap="33px"
-                  width="244px"
+                  width="300px"
                   height="49px"
-                  sx={{ backgroundColor: "#F1F1F1", borderRadius: "49px" }}
                 >
                   <Typography
                     fontWeight={theme.fontWeight.light}
                     fontSize="16px"
                   >
-                    Total cost:
+                    Total MRP:
                   </Typography>
                   <Typography
                     fontWeight={theme.fontWeight.semiBold}
@@ -333,6 +320,29 @@ const CartSummary = ({ setActiveStep }: IProps) => {
                     ${cartProducts.totalCost}
                   </Typography>
                 </Stack>
+                {cartProducts.discount && (
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="center"
+                    columnGap="33px"
+                    width="244px"
+                    height="49px"
+                  >
+                    <Typography
+                      fontWeight={theme.fontWeight.light}
+                      fontSize="16px"
+                    >
+                      Discount on MRP:
+                    </Typography>
+                    <Typography
+                      fontWeight={theme.fontWeight.semiBold}
+                      fontSize="16px"
+                    >
+                      ${cartProducts.discount}
+                    </Typography>
+                  </Stack>
+                )}
               </Stack>
             </Stack>
           </Stack>
