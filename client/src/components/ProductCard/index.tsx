@@ -5,7 +5,6 @@ import theme from "../../theme";
 
 import { IProduct } from "../../types/product";
 
-import FavoriteButton from "../FavoriteButton";
 
 interface IProps {
   product: IProduct;
@@ -55,10 +54,6 @@ const ProductCard = ({ product }: IProps) => {
           src={product.imageUrl}
           loading="lazy"
           alt={product.name}
-        />
-        <FavoriteButton
-          productId={product.id}
-          isFavorite={product.isFavorite}
         />
       </Box>
       <Stack sx={{ paddingLeft: "5px", paddingRight: "5px" }}>

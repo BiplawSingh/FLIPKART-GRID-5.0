@@ -32,7 +32,6 @@ const productSlice = createSlice({
 
 interface IFetchProductPayload {
   productId: string;
-  favoriteProductIds: string[] | undefined;
 }
 
 const product: IProduct = {
@@ -51,13 +50,12 @@ const product: IProduct = {
   primaryCategory: "men",
   secondaryCategory: "sho",
   tertiaryCategory: "ls",
-  isFavorite: false,
   collections: ["New", "Sale"],
 };
 
 export const fetchProduct = createAsyncThunk(
   "product/fetchProduct",
-  async ({ productId, favoriteProductIds }: IFetchProductPayload, thunkAPI) => {
+  async ({ productId }: IFetchProductPayload, thunkAPI) => {
     // const docRef = doc(db, "products", productId);
     // const docData = await getDocFromServer(docRef);
     // if (docData.exists()) {

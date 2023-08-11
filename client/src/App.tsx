@@ -16,7 +16,6 @@ import {
   Products,
   ProductDetail,
   Cart,
-  FavoriteProducts,
 } from "./pages";
 
 import { Box } from "@mui/material";
@@ -35,7 +34,6 @@ function App() {
           <Route path="/product-detail" element={<ProductDetail />} />
           <Route path="/auth/:key" element={<Auth />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/favorite-products" element={<FavoriteProducts />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Newsletter />

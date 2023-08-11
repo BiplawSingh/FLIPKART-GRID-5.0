@@ -6,7 +6,6 @@ import {
   filterBySubCategories,
   getCachedProductsByPrimaryCategories,
   getCachedProductsByPrimaryCategory,
-  mapWithFavoriteProductIds,
   sliceProductsAndAddToLocalStorage,
 } from "./helpers";
 import { IParameter } from "../../types/parameters";
@@ -25,7 +24,6 @@ interface IinitialState {
   cartProducts: ICartProducts;
   productsByIds: IProduct[] | null;
   productsByCategory: IProduct[] | null;
-  favoriteProducts: IProduct[] | null;
   loading: boolean;
 }
 
@@ -34,7 +32,6 @@ const initialState: IinitialState = {
   productsByIds: null,
   productsByCategory: null,
   cartProducts: { products: null, totalCost: 0 },
-  favoriteProducts: null,
   loading: false,
 };
 
@@ -72,21 +69,6 @@ const productsSlice = createSlice({
         state.cartProducts.totalCost = total;
       } else {
         state.cartProducts.totalCost = 0;
-      }
-    },
-    setFavoriteProducts(state, action: PayloadAction<string[] | undefined>) {
-      if (state.products && action.payload && action.payload.length > 0) {
-        const copyProducts = cloneDeep(state.products);
-        const matchedProducts = copyProducts.filter((product) => {
-          const isFavorite = action.payload!.some((id) => product.id === id);
-          if (isFavorite) {
-            product.isFavorite = isFavorite;
-          }
-          return isFavorite;
-        });
-        state.favoriteProducts = matchedProducts;
-      } else {
-        state.favoriteProducts = null;
       }
     },
   },
@@ -132,7 +114,6 @@ const products: IProduct[] = [
     primaryCategory: "men",
     secondaryCategory: "sho",
     tertiaryCategory: "ls",
-    isFavorite: false,
     collections: ["New", "Sale"],
   },
 ];
@@ -214,5 +195,5 @@ export const fetchProductsByCategories = createAsyncThunk(
 );
 
 export default productsSlice.reducer;
-export const { setCartProductsAndTotalCost, setFavoriteProducts } =
+export const { setCartProductsAndTotalCost } =
   productsSlice.actions;
