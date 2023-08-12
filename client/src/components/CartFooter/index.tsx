@@ -28,7 +28,7 @@ interface IProps {
   handleClickNextStepButton: () => void;
 }
 
-const stepperButtonStyles: SxProps<Theme> = {
+export const stepperButtonStyles: SxProps<Theme> = {
   backgroundColor: "#FBB03B",
   borderRadius: "49px",
   color: "#000000",
