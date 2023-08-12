@@ -20,7 +20,7 @@ import {
 import theme from "../../theme";
 
 // Components
-import { ColorPalette, Counter, FavoriteButton } from "../../components";
+import { ColorPalette, Counter } from "../../components";
 import { ProductCareIcon, ProductMaterialsIcon } from "../../ui";
 
 // Hooks
@@ -56,7 +56,6 @@ const ProductDetail = () => {
       dispatch(
         fetchProduct({
           productId: id,
-          favoriteProductIds: user?.favoriteProductIds,
         })
       );
     }
@@ -346,11 +345,6 @@ const ProductDetail = () => {
                     className="product-detail-image"
                     alt={product.product.name}
                   />
-                  <FavoriteButton
-                    sx={{ display: { xs: "flex", lg: "none" } }}
-                    productId={product.product.id}
-                    isFavorite={product.product.isFavorite}
-                  />
                 </Box>
               </Stack>
 
@@ -496,12 +490,6 @@ const ProductDetail = () => {
                     >
                       ADD TO CART
                     </Button>
-                    <FavoriteButton
-                      position="static"
-                      sx={{ display: { xs: "none", lg: "flex" } }}
-                      productId={product.product.id}
-                      isFavorite={product.product.isFavorite}
-                    />
                   </Stack>
                 </Stack>
               </Stack>

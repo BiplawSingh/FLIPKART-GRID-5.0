@@ -17,7 +17,6 @@ export interface IProduct {
   secondaryCategory: string;
   tertiaryCategory: string;
   collections: string[];
-  isFavorite: boolean;
 }
 
 export interface IModifiedProduct extends IProduct {

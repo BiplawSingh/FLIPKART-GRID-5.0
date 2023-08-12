@@ -13,7 +13,6 @@ import {
   Badge,
 } from "@mui/material";
 import {
-  FavoriteBorder,
   Menu as MenuIcon,
   Person,
   PersonOutlined,
@@ -80,14 +79,6 @@ const Navbar = () => {
   const handleClickShoppingCart = () => {
     if (currentUser) {
       navigate({ pathname: "/cart" });
-    } else {
-      navigate("/auth/login");
-    }
-  };
-
-  const handleClickFavoriteIcon = () => {
-    if (currentUser) {
-      navigate({ pathname: "/favorite-products" });
     } else {
       navigate("/auth/login");
     }
@@ -234,15 +225,6 @@ const Navbar = () => {
               ) : (
                 <ShoppingCartOutlined />
               )}
-            </IconButton>
-            <IconButton
-              sx={{
-                width: "34px",
-                height: "34px",
-              }}
-              onClick={handleClickFavoriteIcon}
-            >
-              <FavoriteBorder />
             </IconButton>
             <IconButton
               size="small"
