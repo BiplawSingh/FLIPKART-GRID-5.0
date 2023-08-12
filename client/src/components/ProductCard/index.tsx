@@ -7,6 +7,8 @@ import { IProduct } from "../../types/product";
 
 import FavoriteButton from "../FavoriteButton";
 
+import StarRateIcon from "@mui/icons-material/StarRate";
+
 interface IProps {
   product: IProduct;
 }
@@ -25,7 +27,7 @@ const ProductCard = ({ product }: IProps) => {
     <Stack
       sx={{
         width: "272px",
-        height: "350px",
+        height: "380px",
         borderRadius: "8px",
         border: "1px solid #e6e6e6",
         cursor: "pointer",
@@ -43,7 +45,7 @@ const ProductCard = ({ product }: IProps) => {
           "& .product-image": {
             borderTopLeftRadius: "8px",
             borderTopRightRadius: "8px",
-            height: "272px",
+            height: "250px",
             width: "100%",
             objectFit: "cover",
           },
@@ -61,28 +63,81 @@ const ProductCard = ({ product }: IProps) => {
           isFavorite={product.isFavorite}
         />
       </Box>
-      <Stack sx={{ paddingLeft: "5px", paddingRight: "5px" }}>
+      <Stack
+        sx={{ paddingLeft: "10px", paddingRight: "10px", paddingTop: "10px" }}
+      >
         <Typography
           sx={{
             display: "-webkit-box",
             WebkitLineClamp: "2",
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
-            fontSize: { xs: "12px", sm768: "13px" },
-            fontWeight: theme.fontWeight.light,
+            fontSize: { xs: "13px", sm768: "15px" },
+            fontWeight: theme.fontWeight.semiBold,
             width: "100%",
-            height: "40px",
+            height: "20px",
           }}
         >
-          {product.name}
+          HIGHLANDER
+        </Typography>
+        <Typography
+          sx={{
+            display: "-webkit-box",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            fontSize: { xs: "12px", sm768: "14px" },
+            fontWeight: theme.fontWeight.light,
+            width: "100%",
+            height: "30px",
+            color: "grey",
+          }}
+        >
+          Men Tapered Fit Jeans
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: { xs: "12px", sm768: "14px" },
+            fontWeight: theme.fontWeight.semiBold,
+            height: "30px",
+          }}
+        >
+          <Box component="span" sx={{ marginRight: "15px" }}>
+            <StarRateIcon style={{ color: "green", fontSize: "16px" }} />
+            <StarRateIcon style={{ color: "green", fontSize: "16px" }} />
+            <StarRateIcon style={{ color: "green", fontSize: "16px" }} />
+            <StarRateIcon style={{ color: "green", fontSize: "16px" }} />
+          </Box>
+          <Box component="span">28.1K</Box>
         </Typography>
         <Typography
           sx={{
             fontSize: { xs: "12px", sm768: "16px" },
-            fontWeight: theme.fontWeight.regular,
           }}
         >
-          ${product.price}
+          <Box
+            component="span"
+            sx={{
+              fontWeight: 200,
+              textDecoration: "line-through",
+              color: "grey",
+            }}
+          >
+            $1,499
+          </Box>
+          <Box component="span" sx={{ fontWeight: 800, marginLeft: "15px" }}>
+            $749
+          </Box>
+          <Box
+            component="span"
+            sx={{
+              fontWeight: 700,
+              color: "red",
+              marginLeft: "15px",
+            }}
+          >
+            $700 OFF!
+          </Box>
         </Typography>
       </Stack>
     </Stack>
