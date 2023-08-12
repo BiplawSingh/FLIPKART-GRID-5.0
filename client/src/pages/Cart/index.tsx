@@ -179,12 +179,12 @@ const Cart = () => {
           </Stepper>
         </Stack>
         {renderPageContent()}
-        <CartFooter
+        {(activeStep === 0 || activeStep === 1) && <CartFooter
           steps={steps}
           activeStep={activeStep}
           handleClickBackButton={handleClickBackButton}
           handleClickNextStepButton={handleClickNextStepButton}
-        />
+        />}
       </Stack>
     </>
   );
