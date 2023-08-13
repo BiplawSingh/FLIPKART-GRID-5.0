@@ -37,5 +37,6 @@ export { default as AddressAndDelivery } from "./AddressAndDelivery";
 export { default as DeliveryMethodCard } from "./DeliveryMethodCard";
 export { default as CartSummary } from "./CartSummary";
 export { default as PaymentMethodsRenderer } from "./PaymentMethodsRenderer";
+export { default as ApplyCoupon } from "./ApplyCoupon";
 export { default as PaymentMethodCard } from "./PaymentMethodCard";
 export { default as CartFooter } from "./CartFooter";

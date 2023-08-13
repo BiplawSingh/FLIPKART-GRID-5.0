@@ -34,6 +34,8 @@ import Counter from "../Counter";
 
 import { addUserProductsInCart } from "../../helpers/addUserProductsInCart";
 
+import ApplyCoupon from "../ApplyCoupon";
+
 const CartProductsRenderer = () => {
   const {
     user: { user },
