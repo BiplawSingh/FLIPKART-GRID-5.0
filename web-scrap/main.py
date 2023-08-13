@@ -8,86 +8,188 @@ headers = {
 }
 
 s = requests.Session()
-# hmURL = "https://www2.hm.com/en_in/women/shop-by-product/skirts.html?sort=stock&image-size=small&image=model&offset=0&page-size=252"
-# hmURL = "https://www2.hm.com/en_in/women/shop-by-product/shorts.html?sort=stock&image-size=small&image=model&offset=0&page-size=252"
-# hmURL = "https://www2.hm.com/en_in/women/shop-by-product/tops.html?sort=stock&image-size=small&image=model&offset=0&page-size=936"
-hmURL = "https://www2.hm.com/en_in/women/shop-by-product/shirts-blouses.html?sort=stock&image-size=small&image=model&offset=0&page-size=324"
-res = s.get(hmURL, headers=headers)
-product_card_soup = BeautifulSoup(res.text, "lxml")
-product_links = product_card_soup.find_all("a", class_="item-link")
-domain = 'https://www2.hm.com'
-href_list = [domain + anchor.get('href') for anchor in product_links]
 
-smaller_list = href_list
-def flatten_and_remove_empty(lst):
-    flattened = []
-    for item in lst:
-        if isinstance(item, list):
-            flattened.extend(flatten_and_remove_empty(item))
-        elif item:  # Check if item is not empty
-            flattened.append(item)
-    return flattened
+hm_csv_url = {
+    'shorts.csv' :'https://www2.hm.com/en_in/women/shop-by-product/shorts.html?sort=stock&image-size=small&image=model&offset=0&page-size=252',
+    'sweatshirt_hoodies.csv' :'https://www2.hm.com/en_in/women/shop-by-product/hoodies-sweatshirts.html?sort=stock&image-size=small&image=model&offset=0&page-size=252',
+    'tops.csv' :'https://www2.hm.com/en_in/women/shop-by-product/tops.html?sort=stock&image-size=small&image=model&offset=0&page-size=900',
+    'dresses.csv' :'https://www2.hm.com/en_in/women/shop-by-product/dresses.html?sort=stock&image-size=small&image=model&offset=0&page-size=972',
+    'pants.csv' :'https://www2.hm.com/en_in/women/shop-by-product/trousers.html?sort=stock&image-size=small&image=model&offset=0&page-size=576',
+    'jeans.csv' :'https://www2.hm.com/en_in/women/shop-by-product/jeans.html?sort=stock&image-size=small&image=model&offset=0&page-size=144',
+    'skirts.csv' :'https://www2.hm.com/en_in/women/shop-by-product/skirts.html?sort=stock&image-size=small&image=model&offset=0&page-size=252',
+    'shirt_blouse.csv' :'https://www2.hm.com/en_in/women/shop-by-product/shirts-blouses.html?sort=stock&image-size=small&image=model&offset=0&page-size=324'
+}
 
-header = ['Material', 'Full Description']
+for urls in hm_csv_url :
+    hmURL = hm_csv_url[urls]
+    res = s.get(hmURL, headers=headers)
+    product_card_soup = BeautifulSoup(res.text, "lxml")
+    product_links = product_card_soup.find_all("a", class_="item-link")
+    domain = 'https://www2.hm.com'
+    href_list = [domain + anchor.get('href') for anchor in product_links]
 
-csv_filename = "shirts-blouses.csv"
-with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
-    csv_writer = csv.writer(csv_file)
+    smaller_list = href_list
 
-    for link in smaller_list:
-        product_page_response = s.get(link, headers=headers)
-        product_page_soup = BeautifulSoup(product_page_response.text, "lxml")
-        product_desc = product_page_soup.find("div", {"id": "section-descriptionAccordion"})
+    def flatten_and_remove_empty(lst):
+        flattened = []
+        for item in lst:
+            if isinstance(item, list):
+                flattened.extend(flatten_and_remove_empty(item))
+            elif item:  # Check if item is not empty
+                flattened.append(item)
+        return flattened
+
+    header = ['Material', 'Full Description']
+
+    csv_filename = urls
+    with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
+        csv_writer = csv.writer(csv_file)
+
+        for link in smaller_list:
+            product_page_response = s.get(link, headers=headers)
+            product_page_soup = BeautifulSoup(product_page_response.text, "lxml")
+            product_desc = product_page_soup.find("div", {"id": "section-descriptionAccordion"})
+            
+            material_desc = product_page_soup.find("div", {"id": "section-materialsAndSuppliersAccordion"}).find_all("dl")[0]
+            material_type = [type.get_text(strip=True) for type in material_desc.find_all("dd")]
+            cleaned_material_type = [type[:-1] if type.endswith(",") else type for type in material_type] 
         
-        material_desc = product_page_soup.find("div", {"id": "section-materialsAndSuppliersAccordion"}).find_all("dl")[0]
-        material_type = [type.get_text(strip=True) for type in material_desc.find_all("dd")]
-        cleaned_material_type = [type[:-1] if type.endswith(",") else type for type in material_type] 
+            data_dict = {}
+            data_dict['material'] = cleaned_material_type
+            
+            key = "Full " + product_desc.h2.text
+            value = product_desc.p.text
+            data_dict[key] = value
+
+            datas = product_desc.find_all("div")
+
+            for data in datas:
+                keys = data.find_all("dt")
+                values = data.find_all("dd")
+
+                for i in range(len(keys)):
+                    key = keys[i].get_text(strip=True)
+                    if key[0] == '>':
+                        key = key[1:]
+
+                    if key not in header:
+                        header.append(key)
+
+                if not header:  # Write headers only once
+                    header.insert(0, "Product Link")
+                    csv_writer.writerow(header)
+
+                for i in range(len(keys)):
+                    key = keys[i].get_text(strip=True)
+                    if key[0] == '>':
+                        key = key[1:]
+
+                    get_values = values[i].find_all('li')
+                    if get_values:
+                        text_value = [value.get_text(strip=True) for value in get_values]
+                        if len(text_value) == 1:
+                            text_value = text_value[0]
+                    else:
+                        if len(values) > 1:
+                            text_value = [value.get_text(strip=True) for value in values]
+                        else:
+                            text_value = values[i].get_text(strip=True)
+
+                    data_dict[key] = text_value
+                    
+                    
+            
+            
+            # Write data to the CSV file
+
+            row_data = [link, data_dict['material']] + [data_dict.get(key, '') for key in header[1:]]
+            csv_writer.writerow(row_data)
+
+    print("Data writing complete.")
+
+
+
+# res = s.get(hmURL, headers=headers)
+# product_card_soup = BeautifulSoup(res.text, "lxml")
+# product_links = product_card_soup.find_all("a", class_="item-link")
+# domain = 'https://www2.hm.com'
+# href_list = [domain + anchor.get('href') for anchor in product_links]
+
+# smaller_list = href_list[:3]
+
+# def flatten_and_remove_empty(lst):
+#     flattened = []
+#     for item in lst:
+#         if isinstance(item, list):
+#             flattened.extend(flatten_and_remove_empty(item))
+#         elif item:  # Check if item is not empty
+#             flattened.append(item)
+#     return flattened
+
+# header = ['Material', 'Full Description']
+
+# csv_filename = "shirts-blouses.csv"
+# with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
+#     csv_writer = csv.writer(csv_file)
+
+#     for link in smaller_list:
+#         product_page_response = s.get(link, headers=headers)
+#         product_page_soup = BeautifulSoup(product_page_response.text, "lxml")
+#         product_desc = product_page_soup.find("div", {"id": "section-descriptionAccordion"})
+        
+#         material_desc = product_page_soup.find("div", {"id": "section-materialsAndSuppliersAccordion"}).find_all("dl")[0]
+#         material_type = [type.get_text(strip=True) for type in material_desc.find_all("dd")]
+#         cleaned_material_type = [type[:-1] if type.endswith(",") else type for type in material_type] 
        
-        data_dict = {}
-        data_dict['material'] = cleaned_material_type
+#         data_dict = {}
+#         data_dict['material'] = cleaned_material_type
         
-        key = "Full " + product_desc.h2.text
-        value = product_desc.p.text
-        data_dict[key] = value
+#         key = "Full " + product_desc.h2.text
+#         value = product_desc.p.text
+#         data_dict[key] = value
 
-        datas = product_desc.find_all("div")
+#         datas = product_desc.find_all("div")
 
-        for data in datas:
-            keys = data.find_all("dt")
-            values = data.find_all("dd")
+#         for data in datas:
+#             keys = data.find_all("dt")
+#             values = data.find_all("dd")
 
-            for i in range(len(keys)):
-                key = keys[i].get_text(strip=True)
-                if key[0] == '>':
-                    key = key[1:]
+#             for i in range(len(keys)):
+#                 key = keys[i].get_text(strip=True)
+#                 if key[0] == '>':
+#                     key = key[1:]
 
-                if key not in header:
-                    header.append(key)
+#                 if key not in header:
+#                     header.append(key)
 
-            if not header:  # Write headers only once
-                header.insert(0, "Product Link")
-                csv_writer.writerow(header)
+#             if not header:  # Write headers only once
+#                 header.insert(0, "Product Link")
+#                 csv_writer.writerow(header)
 
-            for i in range(len(keys)):
-                key = keys[i].get_text(strip=True)
-                if key[0] == '>':
-                    key = key[1:]
+#             for i in range(len(keys)):
+#                 key = keys[i].get_text(strip=True)
+#                 if key[0] == '>':
+#                     key = key[1:]
 
-                get_values = values[i].find_all('li')
-                if get_values:
-                    text_value = [value.get_text(strip=True) for value in get_values]
-                    if len(text_value) == 1:
-                        text_value = text_value[0]
-                else:
-                    text_value = values[i].get_text(strip=True)
+#                 get_values = values[i].find_all('li')
+#                 if get_values:
+#                     text_value = [value.get_text(strip=True) for value in get_values]
+#                     if len(text_value) == 1:
+#                         text_value = text_value[0]
+#                 else:
+#                     if len(values) > 1:
+#                         text_value = [value.get_text(strip=True) for value in values]
+#                     else:
+#                         text_value = values[i].get_text(strip=True)
 
-                data_dict[key] = text_value
+#                 data_dict[key] = text_value
+#                 print(data_dict)
                 
         
         
-        # Write data to the CSV file
+#         # Write data to the CSV file
 
-        row_data = [link, data_dict['material']] + [data_dict.get(key, '') for key in header[1:]]
-        csv_writer.writerow(row_data)
+#         row_data = [link, data_dict['material']] + [data_dict.get(key, '') for key in header[1:]]
+#         csv_writer.writerow(row_data)
 
-print("Data writing complete.")
+# print("Data writing complete.")
